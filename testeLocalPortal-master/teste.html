@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Página CCP Escolhido</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+
+        .header {
+            background-color: #004d40;
+            padding: 10px;
+            display: flex;
+            align-items: center;
+        }
+
+        .header img {
+            height: 50px;
+            margin-right: 20px;
+        }
+
+        .ccp-container {
+            background-color: #00695c;
+            padding: 10px;
+            display: flex;
+            justify-content: space-around;
+            margin: 10px;
+            border-radius: 5px;
+        }
+
+        .ccp-container button {
+            background-color: white;
+            border: none;
+            padding: 10px 15px;
+            cursor: pointer;
+            font-size: 14px;
+            border-radius: 3px;
+        }
+
+        .ccp-container button:hover {
+            background-color: #e0f2f1;
+        }
+
+        .title {
+            text-align: center;
+            font-size: 24px;
+            color: #2e7d32;
+            margin: 20px 0;
+        }
+
+        .filters {
+            background-color: white;
+            padding: 20px;
+            margin: 10px;
+            border-radius: 5px;
+            display: flex;
+            justify-content: space-around;
+            flex-wrap: wrap;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .filters select, .filters input {
+            padding: 10px;
+            margin: 5px;
+            border-radius: 3px;
+            border: 1px solid #ccc;
+            font-size: 14px;
+        }
+
+        .filters button {
+            padding: 10px 20px;
+            background-color: #2e7d32;
+            color: white;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+        }
+
+        .filters button:hover {
+            background-color: #1b5e20;
+        }
+
+        .table-container {
+            margin: 20px;
+            background-color: white;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 10px;
+            border: 1px solid #ccc;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f4f4f4;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <img src="caminho/para/o/seu/icone.png" alt="Icone Vale">
+    </div>
+
+    <div class="ccp-container">
+        <button>CCP-TFPM</button>
+        <button>CCP-ACD</button>
+        <button>CCP-TFCJ</button>
+        <button>CCP-TFSP</button>
+        <button>CCP-CG-SLS</button>
+        <button>CMPN-EFC</button>
+        <button>CCP-TERMINAIS</button>
+        <button>CCP-OEM</button>
+        <button>CCP-MBA</button>
+        <button>CCP-PBA</button>
+    </div>
+
+    <div class="title">
+        CCP ESCOLHIDO
+    </div>
+
+    <div class="filters">
+        <select>
+            <option>LOCAL: TODOS</option>
+        </select>
+        <select>
+            <option>POS: Todos</option>
+        </select>
+        <select>
+            <option>TRACK: Todas</option>
+        </select>
+        <select>
+            <option>REMOTA: TODAS</option>
+        </select>
+        <input type="text" placeholder="CIRCUITO">
+        <input type="text" placeholder="DE: _//_">
+        <input type="text" placeholder="ATÉ: _//_">
+        <button>Filtrar</button>
+        <button>Limpar</button>
+    </div>
+
+    <div class="table-container">
+        <table id="dados-tabela">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Descrição</th>
+                    <th>Setor</th>
+                    <th>Status</th>
+                    <th>Responsável</th>
+                    <th>Data de Cadastro</th>
+                    <th>Previsão de Retirada</th>
+                    <th>Última Mudança</th>
+                    <th>Número de Dias Ativo</th> <!-- Nova coluna -->
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Exportar Tabela para Excel</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.0/xlsx.full.min.js"></script>
+</head>
+<body>
+    <table id="minhaTabela">
+        <thead>
+            <tr>
+                <th>Nome</th>
+                <th>Idade</th>
+                <th>Cidade</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>João</td>
+                <td>25</td>
+                <td>São Luís</td>
+            </tr>
+            <tr>
+                <td>Maria</td>
+                <td>30</td>
+                <td>Rio de Janeiro</td>
+            </tr>
+        </tbody>
+    </table>
+    <button onclick="exportarParaExcel()">Exportar para Excel</button>
+
+    <script>
+        function exportarParaExcel() {
+            var tabela = document.getElementById('minhaTabela');
+            var wb = XLSX.utils.table_to_book(tabela, {sheet: "Sheet1"});
+            XLSX.writeFile(wb, 'tabela.xlsx');
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Página CCP</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.0/xlsx.full.min.js"></script>
+    <link rel="stylesheet" href="styleHome.css">
+</head>
+
+<body>
+
+    <div class="header">
+        <img src="vale-logo-1.svg" alt="Icone Vale">
+        <span class="title">Restrições CCP</span>
+    </div>
+
+    <div class="ccp-container">
+        <button>CCP-TFPM</button>
+        <button>CCP-ACD</button>
+        <button>CCP-TFCJ</button>
+        <button>CCP-TFSP</button>
+        <button>CCP-CG-SLS</button>
+        <button>CMPN-EFC</button>
+        <button>CCP-TERMINAIS</button>
+        <button>CCP-OEM</button>
+        <button>CCP-MBA</button>
+        <button>CCP-PBA</button>
+    </div>
+
+    <div class="title">
+        CCP ESCOLHIDO
+    </div>
+
+    <div class="filters">
+        <div>
+            <button onclick="abrirOverlayFiltro()">Filtrar</button>
+            <button>Limpar</button>
+            <button onclick="abrirOverlayExport()">Exportar</button>
+        </div>
+    </div>
+
+    <div class="table-container">
+        <table id="dados-tabela">
+            <thead>
+                <tr>
+                    <th>Descrição da Restrição</th>
+                    <th>Setor do Pátio</th>
+                    <th>Status da Restrição</th>
+                    <th>Responsável</th>
+                    <th>Data de Cadastro</th>
+                    <th>Previsão de Retirada</th>
+                    <th>Última Mudança</th>
+                    <th>Observação</th>
+                    <th>Número de Dias Ativo</th>
+                    <th>Observação</th>
+
+                </tr>
+            </thead> <tbody>
+            </tbody>
+        </table>
+		<script src="script.js"></script>
+
+    </div>
+
+    <div class="overlay" id="filterOverlay">
+        <div class="overlay-content">
+            <h3>Filtrar por Setor</h3>
+            <div class="search-bar">
+                <input type="text" id="searchInput" onkeyup="filtrarOpcoes()" placeholder="Pesquisar setor...">
+            </div>
+            <div class="filter-options" id="filterOptions">
+                <!-- As opções de filtro serão geradas dinamicamente aqui -->
+            </div>
+            <button onclick="aplicarFiltro()">Aplicar Filtro</button>
+            <button onclick="fecharOverlay()">Cancelar</button>
+        </div>
+    </div>
+
+    <div class="overlay" id="exportOverlay">
+        <div class="overlay-content">
+            <button onclick="exportarParaExcel()">Exportar para Excel</button>
+            <button onclick="exportarParaCSV()">Exportar para CSV</button>
+            <button onclick="fecharOverlay()">Cancelar</button>
+        </div>
+    </div>
+
+    <script>
+        function abrirOverlayFiltro() {
+            document.getElementById('filterOverlay').style.display = 'flex';
+        }
+
+        function abrirOverlayExport() {
+            document.getElementById('exportOverlay').style.display = 'flex';
+        }
+
+        function fecharOverlay() {
+            document.getElementById('filterOverlay').style.display = 'none';
+            document.getElementById('exportOverlay').style.display = 'none';
+        }
+
+        function filtrarOpcoes() {
+            var input = document.getElementById('searchInput');
+            var filter = input.value.toLowerCase();
+            var div = document.getElementById('filterOptions');
+            div.innerHTML = ''; // Limpa as opções anteriores
+
+            if (filter) {
+                var tabela = document.getElementById('dados-tabela');
+                var setores = new Set();
+                for (var i = 1; i < tabela.rows.length; i++) {
+                    var setor = tabela.rows[i].cells[2].innerText;
+                    if (setor.toLowerCase().includes(filter)) {
+                        setores.add(setor);
+                    }
+                }
+
+                setores.forEach(function(setor) {
+                    var label = document.createElement('label');
+                    var checkbox = document.createElement('input');
+                    checkbox.type = 'checkbox';
+                    checkbox.value = setor;
+                    label.appendChild(checkbox);
+                    label.appendChild(document.createTextNode(setor));
+                    div.appendChild(label);
+                    div.appendChild(document.createElement('br'));
+                });
+            }
+        }
+
+        function aplicarFiltro() {
+            var tabela = document.getElementById('dados-tabela');
+            var checkboxes = document.querySelectorAll('#filterOptions input[type="checkbox"]');
+            var setoresSelecionados = Array.from(checkboxes).filter(cb => cb.checked).map(cb => cb.value);
+
+            for (var i = 1; i < tabela.rows.length; i++) {
+                var setor = tabela.rows[i].cells[2].innerText;
+                tabela.rows[i].style.display = setoresSelecionados.length === 0 || setoresSelecionados.includes(setor) ? '' : 'none';
+            }
+
+            fecharOverlay();
+        }
+
+        function exportarParaExcel() {
+            var tabela = document.getElementById('dados-tabela');
+            var wb = XLSX.utils.table_to_book(tabela, { sheet: "Sheet1" });
+            XLSX.writeFile(wb, 'tabela.xlsx');
+            fecharOverlay();
+        }
+
+        function exportarParaCSV() {
+            var tabela = document.getElementById('dados-tabela');
+            var csv = XLSX.utils.sheet_to_csv(XLSX.utils.table_to_sheet(tabela));
+            var blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+            var link = document.createElement("a");
+            link.href = URL.createObjectURL(blob);
+            link.download = 'tabela.csv';
+            link.click();
+            fecharOverlay();
+        }
+    </script>
+</body>
+
+</html>
