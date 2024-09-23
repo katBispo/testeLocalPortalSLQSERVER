@@ -1,15 +1,52 @@
 const express = require('express');
 const odbc = require('odbc');
 const cors = require('cors');
+const crypto = require('crypto');
+const fs = require('fs');
 const app = express();
 const port = 3000;
 
-// Configuração de conexão ODBC
-const config = {
-  connectionString: 'Driver={ODBC Driver 18 for SQL Server};Server=tcp:devdbccp.database.windows.net,1433;Database=CCPTFCJ;Uid=berglimma@berglimma@devdbccp;Pwd=Sup0rt&@L0j@s;Encrypt=yes;TrustServerCertificate=no;Connection Timeout=30;',
-};
+// Função para criptografar a string de conexão
+function encryptConfig() {
+  const algorithm = 'aes-256-cbc';
+  const key = crypto.randomBytes(32);
+  const iv = crypto.randomBytes(16);
 
-// Use o middleware CORS para permitir requisições do frontend
+  const config = {
+    connectionString: 'Driver={ODBC Driver 18 for SQL Server};Server=tcp:devdbccp.database.windows.net,1433;Database=CCPTFCJ;Uid=berglimma@berglimma@devdbccp;Pwd=Sup0rt&@L0j@s;Encrypt=yes;TrustServerCertificate=no;Connection Timeout=30;',
+  };
+
+  const cipher = crypto.createCipheriv(algorithm, key, iv);
+  let encrypted = cipher.update(JSON.stringify(config), 'utf8', 'hex');
+  encrypted += cipher.final('hex');
+
+  fs.writeFileSync('encryptedConfig.txt', `${iv.toString('hex')}:${encrypted}`);
+  fs.writeFileSync('key.txt', key.toString('hex')); 
+
+  console.log('Configuração criptografada e salva com sucesso.');
+}
+
+// Função para descriptografar a string de conexão
+function decryptConfig() {
+  const algorithm = 'aes-256-cbc';
+  const key = Buffer.from(fs.readFileSync('key.txt', 'utf8'), 'hex');
+  const [ivHex, encrypted] = fs.readFileSync('encryptedConfig.txt', 'utf8').split(':');
+  const iv = Buffer.from(ivHex, 'hex');
+
+  const decipher = crypto.createDecipheriv(algorithm, key, iv);
+  let decrypted = decipher.update(encrypted, 'hex', 'utf8');
+  decrypted += decipher.final('utf8');
+
+  return JSON.parse(decrypted);
+}
+
+// Criptografa a configuração-- executar Aapenas uma vez dps eu removo
+encryptConfig();
+
+// Descriptografa a configuração
+const config = decryptConfig();
+
+// Middleware CORS para permitir requisições do frontend
 app.use(cors());
 
 async function connectToDatabase() {
@@ -28,11 +65,11 @@ app.get('/dados', async (req, res) => {
 
   try {
     const result = await connection.query('SELECT * FROM CCP_SERVICE.HistoricoRestricao');
-    res.json(result); // Retorna os dados em formato JSON
+    res.json(result);
   } catch (err) {
     res.status(500).send(err.message);
   } finally {
-    await connection.close(); // Fecha a conexão
+    await connection.close();
   }
 });
 
