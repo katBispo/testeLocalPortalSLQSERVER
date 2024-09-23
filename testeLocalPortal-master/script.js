@@ -28,38 +28,31 @@ document.addEventListener('DOMContentLoaded', () => {
           const dataCadastro = new Date(item.DataCadastro);
           const desativacao = new Date(item.Desativacao);
 
-          // Verificar se a data de desativação é inválida ou "31/12/1969" (geralmente indica null ou undefined)
           if (!item.Desativacao || desativacao.getFullYear() === 1969) {
-            // Se for inválida ou "31/12/1969", exibir um traço
             row.insertCell(8).textContent = "-";
           } else {
-            // Caso contrário, calcular a diferença de dias
             const diffTime = Math.abs(desativacao - dataCadastro);
             const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
             row.insertCell(8).textContent = diffDays;
           }
 
 
-          // Verificar se a data de desativação ou previsão de retirada são inválidas ou "31/12/1969"
           const previsaoRetirada = new Date(item.PrevisaoRetirada);
 
-          // Criar a célula para o status de conclusão (apenas uma coluna)
           const statusConclusaoCell = row.insertCell(8);
 
-          // Verificar se as datas são inválidas (ou seja, "31/12/1969" ou datas ausentes)
           if ((!item.Desativacao || desativacao.getFullYear() === 1969) || (!item.PrevisaoRetirada || previsaoRetirada.getFullYear() === 1969)) {
-            // Exibir um traço no status de conclusão se as datas forem inválidas
+            // datas  inválidas
             statusConclusaoCell.textContent = "-";
           } else {
             // Verificar se a desativação foi antes ou dentro do prazo de previsão de retirada
             if (desativacao <= previsaoRetirada) {
               statusConclusaoCell.textContent = "No prazo";
-              statusConclusaoCell.style.backgroundColor = "green";  // Fundo verde
-              statusConclusaoCell.style.color = "white";  // Texto branco para contraste
-            } else {
+              statusConclusaoCell.style.backgroundColor = "green";  
+              statusConclusaoCell.style.color = "white";  
               statusConclusaoCell.textContent = "Fora do prazo";
-              statusConclusaoCell.style.backgroundColor = "red";  // Fundo vermelho
-              statusConclusaoCell.style.color = "white";  // Texto branco para contraste
+              statusConclusaoCell.style.backgroundColor = "red";  
+              statusConclusaoCell.style.color = "white";  
             }
           }
 
