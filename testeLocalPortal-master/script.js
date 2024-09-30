@@ -1,15 +1,14 @@
 document.addEventListener('DOMContentLoaded', () => {
-  fetch('http://localhost:3000/dados') //ALYERAR DEPOIS PARA OQ??????????
+  fetch('http://localhost:3000/dados') //ALYERAR DEPOIS PARA fetch(/dados)--api no mesmo server que front
     .then(response => {
-      console.log('Status da resposta:', response.status); // Log do status da resposta
-      return response.text(); // Obtém o texto da resposta para depuração
+      console.log('Status da resposta:', response.status);
+      return response.text();
     })
     .then(text => {
-      console.log('Texto da resposta:', text); // Log do texto da resposta
-
+      console.log('Texto da resposta:', text);
       try {
-        const data = JSON.parse(text); // Tenta converter o texto para JSON
-        console.log('Dados:', data); // Log dos dados
+        const data = JSON.parse(text);
+        console.log('Dados:', data);
         const tabela = document.getElementById('dados-tabela').getElementsByTagName('tbody')[0];
         data.forEach(item => {
           const row = tabela.insertRow();
@@ -36,28 +35,27 @@ document.addEventListener('DOMContentLoaded', () => {
             row.insertCell(8).textContent = diffDays;
           }
 
+          /////////////////////////////////////////////
 
           const previsaoRetirada = new Date(item.PrevisaoRetirada);
 
-          const statusConclusaoCell = row.insertCell(8);
+          const statusConclusaoCell = row.insertCell(10);
 
           if ((!item.Desativacao || desativacao.getFullYear() === 1969) || (!item.PrevisaoRetirada || previsaoRetirada.getFullYear() === 1969)) {
-            // datas  inválidas
             statusConclusaoCell.textContent = "-";
           } else {
-            // Verificar se a desativação foi antes ou dentro do prazo de previsão de retirada
             if (desativacao <= previsaoRetirada) {
               statusConclusaoCell.textContent = "No prazo";
-              statusConclusaoCell.style.backgroundColor = "green";  
-              statusConclusaoCell.style.color = "white";  
+              statusConclusaoCell.style.backgroundColor = "green";
+              statusConclusaoCell.style.color = "white";
+            } else {
               statusConclusaoCell.textContent = "Fora do prazo";
-              statusConclusaoCell.style.backgroundColor = "red";  
-              statusConclusaoCell.style.color = "white";  
+              statusConclusaoCell.style.backgroundColor = "red";
+              statusConclusaoCell.style.color = "white";
             }
           }
-
-
-
+          console.log('previsao retirada: ', previsaoRetirada);
+          console.log('desativação: ', desativacao);
 
         });
 

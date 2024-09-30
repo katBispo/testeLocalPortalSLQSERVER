@@ -36,7 +36,6 @@
     <div class="filters">
         <div>
             <button onclick="abrirOverlayFiltro()">Filtrar</button>
-            <button>Limpar</button>
             <button onclick="abrirOverlayExport()">Exportar</button>
         </div>
     </div>
@@ -50,57 +49,82 @@
                     <th>Status da Restrição</th>
                     <th>Responsável</th>
                     <th>Data de cadastro</th>
-                    <th>Previsão de Retirada</th>                  
-                    <th>Última Mudança</th>    
-                    <th>Desativação</th>  
-                    <th>Status de Conclusão</th>                    
-                    <th>Número de dias ativos</th>  
-                    <th>Observação</th>                  
-                
-
-
-
-
+                    <th>Previsão de Retirada</th>
+                    <th>Última Mudança</th>
+                    <th>Desativação</th>
+                    <th>Número de dias ativos</th>
+                    <th>Observação</th>
+                    <th>Status de Conclusão</th>
 
 
                 </tr>
-            </thead> 
+            </thead>
             <tbody>
-               
+
             </tbody>
         </table>
-		<script src="script.js"></script>
+        <script src="script.js"></script>
 
     </div>
 
     <div class="overlay" id="filterOverlay">
         <div class="overlay-content">
-            <h3>Filtrar por Setor</h3>
-            <div class="search-bar">
-                <input type="text" id="searchInput" onkeyup="filtrarOpcoes()" placeholder="Pesquisar setor...">
+            <h3>Filtrar por Colunas</h3>
+
+            <!-- Filtro por Descrição -->
+            <div>
+                <label for="descricaoInput">Descrição da Restrição:</label>
+                <input type="text" id="descricaoInput" onkeyup="filtrarTabela()" placeholder="Pesquisar descrição...">
             </div>
-            <div class="filter-options" id="filterOptions">
+
+            <!-- Filtro por Setor -->
+            <div>
+                <label for="setorInput">Setor Pátio:</label>
+                <input type="text" id="setorInput" onkeyup="filtrarTabela()" placeholder="Pesquisar setor...">
             </div>
-            <button onclick="aplicarFiltro()">Aplicar Filtro</button>
-            <button onclick="fecharOverlay()">Cancelar</button>
+
+            <!-- Filtro por Status -->
+            <div>
+                <label for="statusInput">Status da Restrição:</label>
+                <input type="text" id="statusInput" onkeyup="filtrarTabela()" placeholder="Pesquisar status...">
+            </div>
+
+            <!-- Filtro por Responsável -->
+            <div>
+                <label for="responsavelInput">Responsável:</label>
+                <input type="text" id="responsavelInput" onkeyup="filtrarTabela()"
+                    placeholder="Pesquisar responsável...">
+            </div>
+
+
+             <!-- Filtro por Data de Cadastro -->
+        <div>
+            <label for="dataInicioInput">Data de Cadastro (Início):</label>
+            <input type="date" id="dataInicioInput" onchange="filtrarTabela()">
+        </div>
+        <div>
+            <label for="dataFimInput">Data de Cadastro (Fim):</label>
+            <input type="date" id="dataFimInput" onchange="filtrarTabela()">
+        </div>
+
+
+            <button onclick="fecharOverlay()">Fechar</button>
+            <button onclick="aplicarFiltro()">Aplicar</button>
         </div>
     </div>
-
     <div class="overlay" id="exportOverlay">
         <div class="overlay-content">
             <button onclick="exportarParaExcel()">Exportar para Excel</button>
             <button onclick="exportarParaCSV()">Exportar para CSV</button>
-            <button onclick="fecharOverlay()">Cancelar</button>
+            <button onclick="fecharOverlay()">Fechar</button>
         </div>
     </div>
 
     <script>
+
+
         function abrirOverlayFiltro() {
             document.getElementById('filterOverlay').style.display = 'flex';
-        }
-
-        function abrirOverlayExport() {
-            document.getElementById('exportOverlay').style.display = 'flex';
         }
 
         function fecharOverlay() {
@@ -108,47 +132,49 @@
             document.getElementById('exportOverlay').style.display = 'none';
         }
 
-        function filtrarOpcoes() {
-            var input = document.getElementById('searchInput');
-            var filter = input.value.toLowerCase();
-            var div = document.getElementById('filterOptions');
-            div.innerHTML = ''; // Limpa as opções anteriores
-
-            if (filter) {
-                var tabela = document.getElementById('dados-tabela');
-                var setores = new Set();
-                for (var i = 1; i < tabela.rows.length; i++) {
-                    var setor = tabela.rows[i].cells[2].innerText;
-                    if (setor.toLowerCase().includes(filter)) {
-                        setores.add(setor);
-                    }
-                }
-
-                setores.forEach(function(setor) {
-                    var label = document.createElement('label');
-                    var checkbox = document.createElement('input');
-                    checkbox.type = 'checkbox';
-                    checkbox.value = setor;
-                    label.appendChild(checkbox);
-                    label.appendChild(document.createTextNode(setor));
-                    div.appendChild(label);
-                    div.appendChild(document.createElement('br'));
-                });
-            }
+        function abrirOverlayExport() {
+            document.getElementById('exportOverlay').style.display = 'flex';
         }
 
         function aplicarFiltro() {
-            var tabela = document.getElementById('dados-tabela');
-            var checkboxes = document.querySelectorAll('#filterOptions input[type="checkbox"]');
-            var setoresSelecionados = Array.from(checkboxes).filter(cb => cb.checked).map(cb => cb.value);
-
-            for (var i = 1; i < tabela.rows.length; i++) {
-                var setor = tabela.rows[i].cells[2].innerText;
-                tabela.rows[i].style.display = setoresSelecionados.length === 0 || setoresSelecionados.includes(setor) ? '' : 'none';
-            }
-
-            fecharOverlay();
+            filtrarTabela(); // Chama a função para aplicar o filtro
         }
+
+
+      function filtrarTabela() {
+        var tabela = document.getElementById('dados-tabela');
+        var descricaoFiltro = document.getElementById('descricaoInput').value.toLowerCase();
+        var setorFiltro = document.getElementById('setorInput').value.toLowerCase();
+        var statusFiltro = document.getElementById('statusInput').value.toLowerCase();
+        var responsavelFiltro = document.getElementById('responsavelInput').value.toLowerCase();
+        var dataInicioFiltro = document.getElementById('dataInicioInput').value;
+        var dataFimFiltro = document.getElementById('dataFimInput').value;
+
+        for (var i = 1; i < tabela.rows.length; i++) {
+            var descricao = tabela.rows[i].cells[0].innerText.toLowerCase(); // Descrição da Restrição
+            var setor = tabela.rows[i].cells[1].innerText.toLowerCase(); // Setor Pátio
+            var status = tabela.rows[i].cells[2].innerText.toLowerCase(); // Status da Restrição
+            var responsavel = tabela.rows[i].cells[3].innerText.toLowerCase(); // Responsável
+            var dataCadastro = tabela.rows[i].cells[4].innerText; // Data de Cadastro
+
+            // Convertendo a data de cadastro para um objeto Date
+            var dataCadastroObj = new Date(dataCadastro);
+
+            // Verifica se a linha deve ser exibida
+            var deveExibir = (descricao.includes(descricaoFiltro) || descricaoFiltro === '') &&
+                (setor.includes(setorFiltro) || setorFiltro === '') &&
+                (status.includes(statusFiltro) || statusFiltro === '') &&
+                (responsavel.includes(responsavelFiltro) || responsavelFiltro === '') &&
+                (dataInicioFiltro === '' || dataCadastroObj >= new Date(dataInicioFiltro)) && // Verifica a data de início
+                (dataFimFiltro === '' || dataCadastroObj <= new Date(dataFimFiltro)); // Verifica a data de fim
+
+            // Log para verificar valores
+            console.log(`Linha ${i}: ${descricao}, ${setor}, ${status}, ${responsavel}, ${dataCadastro} => Deve Exibir: ${deveExibir}`);
+
+            tabela.rows[i].style.display = deveExibir ? '' : 'none';
+        }
+    }
+
 
         function exportarParaExcel() {
             var tabela = document.getElementById('dados-tabela');
